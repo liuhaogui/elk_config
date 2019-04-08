@@ -1,0 +1,58 @@
+filebeat.inputs:
+- type: log 
+  enabled: true
+  paths: 
+    # - /var/log/nginx/access.log
+    # - /Applications/XAMPP/xamppfiles/htdocs/test/ELK/filebeat-6.4.0-darwin-x86_64/test-log/nginx-ingress/nginx-ingress.log
+  json.keys_under_root: true 
+  json.overwrite_keys: true 
+  encoding: utf-8
+  fields_under_root: true
+  fields:
+    logsource: nginx
+
+- type: log 
+  enabled: true
+  paths: 
+    # - /var/log/nginx/nginx-ep.log
+    - /Applications/XAMPP/xamppfiles/htdocs/test/ELK/filebeat-6.4.0-darwin-x86_64/test-log/nginx-ingress/ep.log
+  # json.keys_under_root: true 
+  # json.overwrite_keys: true 
+  encoding: utf-8
+  fields_under_root: true
+  fields:
+    logsource: ep
+    
+
+setup.template.settings:
+  index.number_of_shards: 2
+
+output.elasticsearch:
+  pipeline: filebeat-remove
+  # hosts: ["${ELASTIC_ADDRESS}"]
+  # protocol: "http"
+  # username:  "${ELASTIC_USERNAME}"
+  # password: "${ELASTIC_PASSWORD}"
+  index: "nginx-%{+yyyy.MM.dd}"
+  hosts: ["localhost:9200"]
+  protocol: "http"
+  username: "elastic"
+  password: "Gaoji_001#"
+
+  indices:
+    - index: "nginx-%{+yyyy.MM.dd}"
+      when.contains:
+        logsource: "nginx"
+    - index: "nginx-ep-%{+yyyy.MM.dd}"
+      when.contains:
+        logsource: "ep"
+
+
+setup.template.name: "t-nginx"
+setup.template.pattern: "t-nginx-*"
+setup.dashboards.index: "t-nginx-*" 
+setup.dashboards.enabled: false
+# setup.template.fields: "/usr/share/filebeat/fields.yml"
+setup.template.fields: "/test/ELK/filebeat-6.4.0-darwin-x86_64/fields.yml"
+  
+

@@ -1,0 +1,15 @@
+
+- key: beat
+  title: Beat
+  description: >
+    Contains common beat fields available in all event types.
+  fields:
+
+    - name: message
+      type: text
+      ignore_above: 0
+      required: true
+      description: >
+        The content of the line read from the log file.
+
+  
